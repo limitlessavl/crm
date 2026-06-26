@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"><meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"><meta name="color-scheme" content="light dark"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Limitless CRM"><title>Limitless AVL — Field CRM</title><style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"><meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)"><meta name="color-scheme" content="light dark"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="LAVL CRM"><title>LAVL CRM</title><style>
 :root{
  --bg:#F2F2F7;--card:#FFFFFF;--ink:#1C1C1E;--ink2:rgba(60,60,67,.6);--ink3:rgba(60,60,67,.3);
  --sep:rgba(60,60,67,.16);--tint:#007AFF;--tint-soft:rgba(0,122,255,.12);--good:#34C759;--good-soft:rgba(52,199,89,.16);
@@ -157,7 +157,7 @@ select.f{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3
 <div id="authMsg" class="authmsg"></div><div id="authEmail" class="small" style="margin-top:8px"></div>
 <button class="btn ghost sm" id="authSignout" style="display:none;margin-top:10px">Sign out</button></div></div>
 <div class="app" id="appWrap" style="display:none">
- <header class="top"><div class="logo">Limitless AVL</div><div class="spacer"></div>
+ <header class="top"><div class="logo">LAVL CRM</div><div class="spacer"></div>
   <button class="icon" id="btnImport" aria-label="Import"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7.5 11.5L12 16l4.5-4.5"/><path d="M5 20h14"/></svg></button>
   <button class="icon" id="btnAddTop" aria-label="Add"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button></header>
  <main><section id="view-today" class="view active"></section><section id="view-pipeline" class="view"></section><section id="view-contacts" class="view"></section><section id="view-more" class="view"></section></main>
@@ -358,7 +358,7 @@ function renderMore(){const root=$("view-more");
 function parseCSV(text){text=text.replace(/^﻿/,"");const rows=[];let row=[],cur="",q=false;for(let i=0;i<text.length;i++){const ch=text[i];if(q){if(ch==='"'){if(text[i+1]==='"'){cur+='"';i++;}else q=false;}else cur+=ch;}else{if(ch==='"')q=true;else if(ch===','){row.push(cur);cur="";}else if(ch==='\n'){row.push(cur);rows.push(row);row=[];cur="";}else if(ch==='\r'){}else cur+=ch;}}if(cur!==""||row.length){row.push(cur);rows.push(row);}return rows.filter(r=>r.length>1||(r[0]&&r[0].trim()));}
 async function importCSV(text){const rows=parseCSV(text);if(rows.length<2){toast("Empty file");return;}
   const head=rows[0].map(h=>h.trim().toLowerCase());const idx=(...n)=>{for(const x of n){const i=head.indexOf(x);if(i>=0)return i;}return -1;};
-  const iName=idx("name"),iFirst=idx("primary contact first name","first name"),iLast=idx("primary contact last name","last name"),iRole=idx("role","primary contact title","title"),iHead=idx("headline","title / headline"),iOrg=idx("church (parsed)","church","org","company","client"),iUrl=idx("profile url","url","website"),iPri=idx("priority"),iStat=idx("status"),iEmail=idx("email","primary contact email"),iPhone=idx("phone","primary contact phone 1"),iCity=idx("city","location"),iState=idx("state");
+  const iName=idx("name"),iFirst=idx("primary contact first name","first name"),iLast=idx("primary contact last name","last name"),iRole=idx("role","primary contact title","title"),iHead=idx("headline","title / headline"),iOrg=idx("church (parsed)","church","org","company","client"),iUrl=idx("profile url","url","website"),iPri=idx("priority"),iStat=idx("status"),iEmail=idx("email","primary contact email"),iPhone=idx("phone","primary contact phone 1"),iCity=idx("city","location"),iState=idx("state"),iChan=idx("channel","source");
   const urlSet=new Set(CONTACTS.map(c=>(c.url||"").toLowerCase()).filter(Boolean));
   const nameSet=new Set(CONTACTS.map(c=>((c.name||"")+"|"+(c.org||"")).toLowerCase()).filter(k=>!k.endsWith("|")));
   let n=0,dups=0;const batch=writeBatch(db);
@@ -367,7 +367,7 @@ async function importCSV(text){const rows=parseCSV(text);if(rows.length<2){toast
     let url=get(iUrl);if(url&&!/^https?:/i.test(url))url="https://"+url;const nkey=(name+"|"+org).toLowerCase();
     if(url&&urlSet.has(url.toLowerCase())){dups++;continue;}if(org&&nameSet.has(nkey)){dups++;continue;}
     const pri=(get(iPri).match(/^[ABC]/i)||[""])[0].toUpperCase();let stat=get(iStat);if(!STATUSES.includes(stat))stat="New";
-    const c=norm({name,role:get(iRole),org,title:get(iHead),channel:iName<0?"JetBuilt":"LinkedIn",location:[get(iCity),get(iState)].filter(Boolean).join(", "),phone:get(iPhone),email:get(iEmail),url,priority:PRIORITIES.includes(pri)?pri:"",status:stat});
+    const c=norm({name,role:get(iRole),org,title:get(iHead),channel:(CHANNELS.includes(get(iChan))?get(iChan):(iName<0?"JetBuilt":"LinkedIn")),location:[get(iCity),get(iState)].filter(Boolean).join(", "),phone:get(iPhone),email:get(iEmail),url,priority:PRIORITIES.includes(pri)?pri:"",status:stat});
     c.createdAt=Date.now();c.createdBy=ME?ME.name:"";batch.set(doc(db,"contacts",c.id),clean(c));if(url)urlSet.add(url.toLowerCase());if(org)nameSet.add(nkey);n++;}
   try{await batch.commit();toast("Imported "+n+(dups?(" · skipped "+dups+" dup"+(dups===1?"":"s")):""));}catch(e){toast("Import failed: "+(e.code||e.message));}}
 function importJSON(text){try{const o=JSON.parse(text);const arr=Array.isArray(o)?o:(o.contacts||[]);const batch=writeBatch(db);let n=0;arr.forEach(x=>{if(!x||!x.name)return;const c=norm(x);c.id=c.id||uid();batch.set(doc(db,"contacts",c.id),clean(c));n++;});batch.commit().then(()=>toast("Imported "+n));}catch(e){toast("Invalid JSON");}}
