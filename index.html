@@ -151,6 +151,22 @@ select.f{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3
 .tcheck.on{background:var(--good);border-color:var(--good);position:relative}
 .tcheck.on::after{content:"✓";color:#fff;font-size:13px;position:absolute;left:4px;top:0}
 .contact[data-task]::after{display:none}
+
+@media (min-width:900px){
+ .app{max-width:1180px}
+ nav.tabs{max-width:1180px}
+ main{padding:8px 24px 112px}
+ .lt{font-size:38px;padding-top:10px}
+ .view.active{display:flex;flex-wrap:wrap;gap:10px 12px;align-content:flex-start}
+ .view.active>*{flex:1 1 100%;min-width:0}
+ .view.active>.card{flex:1 1 calc(50% - 6px);max-width:calc(50% - 6px);margin-bottom:0}
+ .stats{max-width:520px}
+ .sheet{max-width:760px;border-radius:16px;margin-bottom:5vh;align-self:center}
+ .modal{align-items:center}
+}
+@media (min-width:1320px){
+ .view.active>.card{flex:1 1 calc(33.333% - 8px);max-width:calc(33.333% - 8px)}
+}
 </style></head><body>
 <div id="authView"><div class="authcard"><div class="brand">Limitless AVL</div><div class="tag">Field CRM — team workspace</div>
 <button class="btn primary" id="signInBtn">Sign in with Google</button>
